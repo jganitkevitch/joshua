@@ -64,22 +64,8 @@ public class MemoryBasedTrie implements Trie {
 
   /* See Javadoc for Trie interface. */
   public RuleCollection getRuleCollection() {
-    // if (this.rule_bin==null) {
-    // throw new
-    // Error("Uninitialized RuleCollection encountered. Instead of returning a null pointer, this error is being thrown.");
-    // } else {
     return this.ruleBin;
-    // }
   }
-
-
-  /*
-   * //recursive call, to make sure all rules are sorted public void
-   * ensure_sorted(ArrayList<FeatureFunction> l_models) { if (null != this.rule_bin) {
-   * this.rule_bin.sortRules(l_models); } if (null != this.tbl_children) { Object[] tem =
-   * this.tbl_children.values().toArray(); for (int i = 0; i < tem.length; i++) {
-   * ((MemoryBasedTrie)tem[i]).ensure_sorted(l_models); } } }
-   */
 
   /* See Javadoc for Trie interface. */
   public Collection<MemoryBasedTrie> getExtensions() {

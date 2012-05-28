@@ -68,3 +68,4 @@ doxygen_*.tmp
 
 test/scripts/tokenization/diff
 test/scripts/tokenization/output
+test/bn-en/packed/output

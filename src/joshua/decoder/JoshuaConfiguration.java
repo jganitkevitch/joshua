@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import joshua.util.Regex;
@@ -77,6 +78,10 @@ public class JoshuaConfiguration {
   public static boolean use_max_lm_cost_for_oov = false;
   public static int oov_feature_index = -1;
   public static boolean true_oovs_only = false;
+
+  public static boolean use_micro_tm_feat = true;
+  // Table for mapping rule words, whatever that means.
+  public static String word_map_file;
 
   // number of phrasal features, for correct oov rule creation
   public static int num_phrasal_features = 0;
@@ -291,6 +296,17 @@ public class JoshuaConfiguration {
 
           } else if (parameter.equals(normalize_key("true_oovs_only"))) {
             true_oovs_only = Boolean.parseBoolean(fds[1]);
+
+          } else if (parameter.equals(normalize_key("use_micro_tm_feat"))) {
+            use_micro_tm_feat = new Boolean(fds[1].trim());
+            if (logger.isLoggable(Level.FINEST)) {
+              logger.finest(String.format("Use micro TM features: %s", use_micro_tm_feat));
+            }
+          } else if (parameter.equals(normalize_key("wordMapFile"))) {
+            word_map_file = fds[1].trim();
+            if (logger.isLoggable(Level.FINEST)) {
+              logger.finest(String.format("word-map file: %s", word_map_file));
+            }
 
           } else if (parameter.equals(normalize_key("use_pos_labels"))) {
             use_pos_labels = Boolean.parseBoolean(fds[1]);

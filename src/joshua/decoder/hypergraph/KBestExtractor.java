@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -69,6 +70,9 @@ public class KBestExtractor {
   private boolean performSanityCheck = true;
 
   private int sentID;
+
+  // TO MAP THE FEATURES TO THEIR IDS
+  private static HashMap<Integer, Integer> firing_feat_counts = new HashMap<Integer, Integer>();
 
   public KBestExtractor(boolean extractUniqueNbest, boolean extractNbestTree, boolean includeAlign,
       boolean addCombinedScore, boolean isMonolingual, boolean performSanityCheck) {
@@ -337,14 +341,58 @@ public class KBestExtractor {
       int x = 0;
       x++;
 
-      // sanity check
-//       if (false) {
+
+      // TODO: RE-WRITE THIS PART!!
+      if (false) {
+        // ####individual model cost, and final transition cost
+
+        // THIS PART OUTPUT THE UN-LABELED N-BEST OUTPUT
+
+        for (int k = 0; k < modelCost.length; k++) {
+          strHyp.append(String.format(" %.3f", -modelCost[k]));
+          temSum += modelCost[k] * models.get(k).getWeight();
+
+          System.err.println("tem_sum: " + temSum + " += " + modelCost[k] + " * "
+              + models.get(k).getWeight());
+        }
+
+
+        // THIS PART OUTPUT THE LABELED N-BEST OUTPUT: 1:XX 2:XX 3:XX ...
+
+        /*******************************************************
+         * WARING!! THIS VERSION IS MEANT TO OUTPUT FIRING SPARSE FEATURES, THAT IS IF IN THE
+         * joshua.config FILE, THE SPARSE FEATURES ARE SPECIFIED LIKE: discriminative
+         * micro.rule.feat 1.0 THEN THIS WEIGHT(1.0) WILL BE IGNORED! ONLY SPARSE FEATURE WEIGHTS
+         * WILL BE OUTPUT IF YOU WANT TO OUTPUT THIS FEATURE, REPLACE modelCost.length-1 TO
+         * modelCost.length
+         ******************************************************/
+
+        for (int k = 0; k < modelCost.length - 1; k++) {
+          strHyp.append(String.format(" %d:%.3f", k + 1, -modelCost[k]));
+          temSum += modelCost[k] * models.get(k).getWeight();
+
+          // System.err.println("tem_sum: " + temSum + " += " + modelCost[k] + " * " +
+          // models.get(k).getWeight());
+        }
+
+        // NOTE THAT IN THIS VERSION THE SPARSE FEATURES ARE NOT PRINTED IN ORDER
+        Set<Integer> firing_feature = firing_feat_counts.keySet();
+        Iterator<Integer> it = firing_feature.iterator();
+        while (it.hasNext()) {
+          Integer feat_id = it.next();
+          strHyp.append(String.format(" %d:%d", feat_id + modelCost.length,
+              firing_feat_counts.get(feat_id)));
+        }
+      }
+
+      // if (false) {
       if (performSanityCheck) {
         if (Math.abs(cur.cost - temSum) > 1e-2) {
           StringBuilder error = new StringBuilder();
           error.append("\nIn nbest extraction, Cost does not match; cur.cost: " + cur.cost
               + "; temsum: " + temSum + "\n");
-          // System.out.println("In nbest extraction, Cost does not match; cur.cost: " + cur.cost +
+          // System.out.println("In nbest extraction, Cost does not match; cur.cost: " + cur.cost
+          // +
           // "; temsum: " +tem_sum);
           for (int k = 0; k < modelCost.length; k++) {
             error.append("model weight: " + models.get(k).getWeight() + "; cost: " + modelCost[k]
@@ -366,7 +414,6 @@ public class KBestExtractor {
 
     return strHyp.toString();
   }
-
 
   private String escapeTerminalForTree(String terminal) {
     if (JoshuaConfiguration.escape_trees) {
@@ -804,5 +851,16 @@ public class KBestExtractor {
       }
     }
     return sb.toString();
+  }
+
+  public static void increaseFeatCount(Integer feat_id) {
+    if (firing_feat_counts.containsKey(feat_id))
+      firing_feat_counts.put(feat_id, firing_feat_counts.get(feat_id) + 1);
+    else
+      firing_feat_counts.put(feat_id, 1);
+  }
+
+  public static void clearFeatCount() {
+    firing_feat_counts.clear();
   }
 }
