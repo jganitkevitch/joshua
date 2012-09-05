@@ -150,7 +150,7 @@ public class LMGrammarBerkeley extends DefaultNGramLanguageModel {
     // regular-order ngrams
     for (int i = 0; i <= sentenceLength - order; i++) {
       int[] ngram = Support.subIntArray(sentence, i, i + order);
-      double logProb =  ngramLogProbability_helper(ngram, false);
+      double logProb = ngramLogProbability_helper(ngram, false);
       if (logger.isLoggable(Level.FINE)) {
         String words = Vocabulary.getWords(ngram);
         logger.fine("\tlogp ( " + words + " )  =  " + logProb);
@@ -192,7 +192,7 @@ public class LMGrammarBerkeley extends DefaultNGramLanguageModel {
   }
 
   public double ngramLogProbability(int[] ngram) {
-    return ngramLogProbability_helper(ngram,true);
+    return ngramLogProbability_helper(ngram, true);
   }
 
   public double logProbOfBackoffState(List<Integer> ngram, int order, int qtyAdditionalBackoffWeight) {

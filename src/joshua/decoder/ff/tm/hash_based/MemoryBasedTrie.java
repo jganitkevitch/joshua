@@ -32,7 +32,7 @@ public class MemoryBasedTrie implements Trie {
   HashMap<Integer, MemoryBasedTrie> childrenTbl = null;
   boolean regexpMatch = false;
 
-  public MemoryBasedTrie() { 
+  public MemoryBasedTrie() {
     boolean regexpMatch = false;
   }
 
@@ -45,22 +45,22 @@ public class MemoryBasedTrie implements Trie {
     if (null == childrenTbl) {
       return null;
     } else if (childrenTbl.get(sym_id) != null) {
-        return childrenTbl.get(sym_id);
+      return childrenTbl.get(sym_id);
     } else if (regexpMatch) {
       // get all the extensions, map to string, check for *, build regexp
-      for (Integer arcID: childrenTbl.keySet()) {
+      for (Integer arcID : childrenTbl.keySet()) {
         String arcWord = Vocabulary.word(arcID);
-        if (Vocabulary.word(sym_id).matches(arcWord)) 
-          return childrenTbl.get(arcID);
+        if (Vocabulary.word(sym_id).matches(arcWord)) return childrenTbl.get(arcID);
       }
     }
     return null;
   }
 
-  /* This version only looks for exact matches.  For grammars with regular expressions enabled,
-   * those should be applied only when traversing the completely-built trie structure.  When
-   * building the structure, we do not want regular expressions supplied.  This is the version that
-   * should be called when constructing the trie.
+  /*
+   * This version only looks for exact matches. For grammars with regular expressions enabled, those
+   * should be applied only when traversing the completely-built trie structure. When building the
+   * structure, we do not want regular expressions supplied. This is the version that should be
+   * called when constructing the trie.
    */
   public MemoryBasedTrie exactMatch(int sym_id) {
     if (null == childrenTbl) {

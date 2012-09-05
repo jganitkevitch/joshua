@@ -347,14 +347,15 @@ public class JoshuaDecoder {
   private void initializeGlueGrammar() throws IOException {
     logger.info("Constructing glue grammar...");
 
-    MemoryBasedBatchGrammar gr = (JoshuaConfiguration.glue_file == null) 
-      ? new MemoryBasedBatchGrammar(JoshuaConfiguration.glue_format, 
-            System.getenv().get("JOSHUA") + "/data/" + "glue-grammar",
-            JoshuaConfiguration.glue_owner, JoshuaConfiguration.default_non_terminal, -1,
-            JoshuaConfiguration.oov_feature_cost)
-      : new MemoryBasedBatchGrammar(JoshuaConfiguration.glue_format, JoshuaConfiguration.glue_file,
-            JoshuaConfiguration.glue_owner, JoshuaConfiguration.default_non_terminal, -1,
-            JoshuaConfiguration.oov_feature_cost);
+    MemoryBasedBatchGrammar gr =
+        (JoshuaConfiguration.glue_file == null)
+            ? new MemoryBasedBatchGrammar(JoshuaConfiguration.glue_format, System.getenv().get(
+                "JOSHUA")
+                + "/data/" + "glue-grammar", JoshuaConfiguration.glue_owner,
+                JoshuaConfiguration.default_non_terminal, -1, JoshuaConfiguration.oov_feature_cost)
+            : new MemoryBasedBatchGrammar(JoshuaConfiguration.glue_format,
+                JoshuaConfiguration.glue_file, JoshuaConfiguration.glue_owner,
+                JoshuaConfiguration.default_non_terminal, -1, JoshuaConfiguration.oov_feature_cost);
 
     this.grammarFactories.add(gr);
 
@@ -362,10 +363,10 @@ public class JoshuaDecoder {
 
   private void initializeTranslationGrammars() throws IOException {
 
-		if (JoshuaConfiguration.tms.size() > 0) {
+    if (JoshuaConfiguration.tms.size() > 0) {
 
       // tm = {thrax/hiero,packed,samt} OWNER LIMIT FILE
-      for (String tmLine: JoshuaConfiguration.tms) {
+      for (String tmLine : JoshuaConfiguration.tms) {
         String tokens[] = tmLine.split("\\s+");
         String format = tokens[0];
         String owner = tokens[1];
@@ -377,7 +378,7 @@ public class JoshuaDecoder {
         if (format.equals("packed")) {
           this.grammarFactories.add(new PackedGrammar(file, span_limit));
         } else {
-          this.grammarFactories.add(new MemoryBasedBatchGrammar(format, file, owner, 
+          this.grammarFactories.add(new MemoryBasedBatchGrammar(format, file, owner,
               JoshuaConfiguration.default_non_terminal, span_limit,
               JoshuaConfiguration.oov_feature_cost));
         }
@@ -386,23 +387,23 @@ public class JoshuaDecoder {
       logger.warning("* WARNING: no grammars supplied!  Supplying dummy glue grammar.");
       // TODO: this should initialize the grammar dynamically so that the goal symbol and default
       // non terminal match
-      MemoryBasedBatchGrammar glueGrammar = new MemoryBasedBatchGrammar(JoshuaConfiguration.glue_format, 
-        System.getenv().get("JOSHUA") + "/data/" + "glue-grammar",
-        JoshuaConfiguration.glue_owner, JoshuaConfiguration.default_non_terminal, -1,
-        JoshuaConfiguration.oov_feature_cost);
+      MemoryBasedBatchGrammar glueGrammar =
+          new MemoryBasedBatchGrammar(JoshuaConfiguration.glue_format, System.getenv()
+              .get("JOSHUA") + "/data/" + "glue-grammar", JoshuaConfiguration.glue_owner,
+              JoshuaConfiguration.default_non_terminal, -1, JoshuaConfiguration.oov_feature_cost);
       this.grammarFactories.add(glueGrammar);
-		}
+    }
 
-		logger.info(String.format("Memory used %.1f MB", ((Runtime.getRuntime().totalMemory() - Runtime
+    logger.info(String.format("Memory used %.1f MB", ((Runtime.getRuntime().totalMemory() - Runtime
         .getRuntime().freeMemory()) / 1000000.0)));
   }
-	
+
 
   private void initializeMainTranslationGrammar() throws IOException {
-		if (JoshuaConfiguration.tm_file == null) {
+    if (JoshuaConfiguration.tm_file == null) {
       logger.warning("* WARNING: no TM specified");
-			return;
-		}
+      return;
+    }
 
     if (JoshuaConfiguration.use_sent_specific_tm) {
       logger.info("Basing sentence-specific grammars on file " + JoshuaConfiguration.tm_file);
@@ -553,9 +554,9 @@ public class JoshuaDecoder {
     long startTime = System.currentTimeMillis();
 
     // if (args.length < 1) {
-    //   System.out.println("Usage: java " + JoshuaDecoder.class.getName()
-    //       + " -c configFile [other args]");
-    //   System.exit(1);
+    // System.out.println("Usage: java " + JoshuaDecoder.class.getName()
+    // + " -c configFile [other args]");
+    // System.exit(1);
     // }
 
     String configFile = null;
@@ -572,36 +573,36 @@ public class JoshuaDecoder {
     // argument; if it starts with a hyphen, the new format has
     // been invoked.
 
-		if (args.length >= 1) {
-			if (args[0].startsWith("-")) {
+    if (args.length >= 1) {
+      if (args[0].startsWith("-")) {
 
-				// Search for the configuration file
-				for (int i = 0; i < args.length; i++) {
-					if (args[i].equals("-c") || args[i].equals("-config")) {
+        // Search for the configuration file
+        for (int i = 0; i < args.length; i++) {
+          if (args[i].equals("-c") || args[i].equals("-config")) {
 
-						configFile = args[i + 1].trim();
-						JoshuaConfiguration.readConfigFile(configFile);
+            configFile = args[i + 1].trim();
+            JoshuaConfiguration.readConfigFile(configFile);
 
-						break;
-					}
-				}
+            break;
+          }
+        }
 
-				// now process all the command-line args
-				JoshuaConfiguration.processCommandLineOptions(args);
+        // now process all the command-line args
+        JoshuaConfiguration.processCommandLineOptions(args);
 
-				oracleFile = JoshuaConfiguration.oracleFile;
+        oracleFile = JoshuaConfiguration.oracleFile;
 
-			} else {
+      } else {
 
-				configFile = args[0].trim();
+        configFile = args[0].trim();
 
-				JoshuaConfiguration.readConfigFile(configFile);
+        JoshuaConfiguration.readConfigFile(configFile);
 
-				if (args.length >= 2) testFile = args[1].trim();
-				if (args.length >= 3) nbestFile = args[2].trim();
-				if (args.length == 4) oracleFile = args[3].trim();
-			}
-		}
+        if (args.length >= 2) testFile = args[1].trim();
+        if (args.length >= 3) nbestFile = args[2].trim();
+        if (args.length == 4) oracleFile = args[3].trim();
+      }
+    }
 
     /* Step-0: some sanity checking */
     JoshuaConfiguration.sanityCheck();

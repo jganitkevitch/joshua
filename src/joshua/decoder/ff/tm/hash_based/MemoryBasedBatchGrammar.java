@@ -91,7 +91,8 @@ public class MemoryBasedBatchGrammar extends BatchGrammar {
   public MemoryBasedBatchGrammar(GrammarReader<BilingualRule> gr) {
     // this.defaultOwner = Vocabulary.id(defaultOwner);
     // this.defaultLHS = Vocabulary.id(defaultLHSSymbol);
-    this.root = new MemoryBasedTrie(JoshuaConfiguration.regexpGrammar.equals(Vocabulary.word(defaultOwner)));
+    this.root =
+        new MemoryBasedTrie(JoshuaConfiguration.regexpGrammar.equals(Vocabulary.word(defaultOwner)));
     modelReader = gr;
   }
 
@@ -243,7 +244,9 @@ public class MemoryBasedBatchGrammar extends BatchGrammar {
       // we call exactMatch() here to avoid applying regular expressions along the arc
       MemoryBasedTrie nextLayer = pos.exactMatch(curSymID);
       if (null == nextLayer) {
-        nextLayer = new MemoryBasedTrie(JoshuaConfiguration.regexpGrammar.equals(Vocabulary.word(defaultOwner)));
+        nextLayer =
+            new MemoryBasedTrie(JoshuaConfiguration.regexpGrammar.equals(Vocabulary
+                .word(defaultOwner)));
         if (pos.hasExtensions() == false) {
           pos.childrenTbl = new HashMap<Integer, MemoryBasedTrie>();
         }

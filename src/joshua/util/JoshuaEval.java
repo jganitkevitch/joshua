@@ -346,17 +346,17 @@ public class JoshuaEval {
     } // while (argno)
 
     if (refsPerSen > 1) {
-			String refFile = refFileName + "0";
-			if (! new File(refFile).exists())
-				refFile = refFileName + ".0";
-			if (! new File(refFile).exists()) {
-				System.err.println(String.format("* FATAL: can't find first reference file '%s{0,.0}'", refFileName));
-				System.exit(1);
-			}
+      String refFile = refFileName + "0";
+      if (!new File(refFile).exists()) refFile = refFileName + ".0";
+      if (!new File(refFile).exists()) {
+        System.err.println(String.format("* FATAL: can't find first reference file '%s{0,.0}'",
+            refFileName));
+        System.exit(1);
+      }
 
-			numSentences = countLines(refFile);
+      numSentences = countLines(refFile);
     } else {
-			numSentences = countLines(refFileName);
+      numSentences = countLines(refFileName);
     }
 
     // read in reference sentences
@@ -364,24 +364,27 @@ public class JoshuaEval {
 
     try {
 
-			// read in reference sentences
-			BufferedReader reference_readers[] = new BufferedReader[refsPerSen];
-			if (refsPerSen == 1) {
-				reference_readers[0] = new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFileName)), "utf8"));
-			} else {
-				for (int i = 0; i < refsPerSen; i++) {
-					String refFile = refFileName + i;
-					if (! new File(refFile).exists())
-						refFile = refFileName + "." + i;
-					if (! new File(refFile).exists()) {
-						System.err.println(String.format("* FATAL: can't find reference file '%s'", refFile));
-						System.exit(1);
-					}
+      // read in reference sentences
+      BufferedReader reference_readers[] = new BufferedReader[refsPerSen];
+      if (refsPerSen == 1) {
+        reference_readers[0] =
+            new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFileName)),
+                "utf8"));
+      } else {
+        for (int i = 0; i < refsPerSen; i++) {
+          String refFile = refFileName + i;
+          if (!new File(refFile).exists()) refFile = refFileName + "." + i;
+          if (!new File(refFile).exists()) {
+            System.err.println(String.format("* FATAL: can't find reference file '%s'", refFile));
+            System.exit(1);
+          }
 
-					reference_readers[i] = new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFile)), "utf8"));
-				}
-			}
-				
+          reference_readers[i] =
+              new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFile)),
+                  "utf8"));
+        }
+      }
+
       for (int i = 0; i < numSentences; ++i) {
         for (int r = 0; r < refsPerSen; ++r) {
           // read the rth reference translation for the ith sentence
@@ -389,12 +392,13 @@ public class JoshuaEval {
         }
       }
 
-			// close all the reference files
-			for (int i = 0; i < refsPerSen; i++) 
-				reference_readers[i].close();
+      // close all the reference files
+      for (int i = 0; i < refsPerSen; i++)
+        reference_readers[i].close();
 
     } catch (FileNotFoundException e) {
-      System.err.println("FileNotFoundException in JoshuaEval.processArgsAndInitialize(): " + e.getMessage());
+      System.err.println("FileNotFoundException in JoshuaEval.processArgsAndInitialize(): "
+          + e.getMessage());
       System.exit(99901);
     } catch (IOException e) {
       System.err.println("IOException in JoshuaEval.processArgsAndInitialize(): " + e.getMessage());

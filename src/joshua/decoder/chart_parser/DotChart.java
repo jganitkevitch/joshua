@@ -158,37 +158,39 @@ class DotChart {
 
 
   /**
-   * This function computes all possible expansions of all rules over the provided span (i,j).  By
+   * This function computes all possible expansions of all rules over the provided span (i,j). By
    * expansions, we mean the moving of the dot forward (from left to right) over a nonterminal or
    * terminal symbol on the rule's source side.
-   *
+   * 
    * There are two kinds of expansions:
-   *
-   * 1. Expansion over a nonterminal symbol.  For this kind of expansion, a rule has a dot
-   *    immediately prior to a source-side nonterminal.  The main Chart is consulted to see whether
-   *    there exists a completed nonterminal with the same label.  If so, the dot is advanced.
-   *
-   *    Discovering nonterminal expansions is a matter of enumerating all split points k such that
-   *    i < k and k < j.  The nonterminal symbol must exist in the main Chart over (k,j).
-   *
-   * 2. Expansion over a terminal symbol.  In this case, expansion is a simple matter of determing
-   *    whether the input symbol at position j (the end of the span) matches the next symbol in the
-   *    rule.  This is equivalent to choosing a split point k = j - 1 and looking for terminal
-   *    symbols over (k,j).  Note that phrases in the input rule are handled one-by-one as we
-   *    consider longer spans.
+   * 
+   * 1. Expansion over a nonterminal symbol. For this kind of expansion, a rule has a dot
+   * immediately prior to a source-side nonterminal. The main Chart is consulted to see whether
+   * there exists a completed nonterminal with the same label. If so, the dot is advanced.
+   * 
+   * Discovering nonterminal expansions is a matter of enumerating all split points k such that i <
+   * k and k < j. The nonterminal symbol must exist in the main Chart over (k,j).
+   * 
+   * 2. Expansion over a terminal symbol. In this case, expansion is a simple matter of determing
+   * whether the input symbol at position j (the end of the span) matches the next symbol in the
+   * rule. This is equivalent to choosing a split point k = j - 1 and looking for terminal symbols
+   * over (k,j). Note that phrases in the input rule are handled one-by-one as we consider longer
+   * spans.
    */
   void expandDotCell(int i, int j) {
     if (logger.isLoggable(Level.FINEST)) logger.finest("Expanding dot cell (" + i + "," + j + ")");
 
-    /* (1) If the dot is just to the left of a non-terminal variable, we look for theorems or axioms
-     * in the Chart that may apply and extend the dot position.  We look for existing axioms over
-     * all spans (k,j), i < k < j.
+    /*
+     * (1) If the dot is just to the left of a non-terminal variable, we look for theorems or axioms
+     * in the Chart that may apply and extend the dot position. We look for existing axioms over all
+     * spans (k,j), i < k < j.
      */
     for (int k = i + 1; k < j; k++) {
       extendDotItemsWithProvedItems(i, k, j, false);
     }
 
-    /* (2) If the the dot-item is looking for a source-side terminal symbol, we simply match against
+    /*
+     * (2) If the the dot-item is looking for a source-side terminal symbol, we simply match against
      * the input sentence and advance the dot.
      */
     Node<Integer> node = input.getNode(j - 1);

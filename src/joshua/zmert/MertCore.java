@@ -274,19 +274,19 @@ public class MertCore {
       println("", 1);
     }
 
-		if (refsPerSen > 1) {
-			String refFile = refFileName + "0";
-			if (! new File(refFile).exists())
-				refFile = refFileName + ".0";
-			if (! new File(refFile).exists()) {
-				System.err.println(String.format("* FATAL: can't find first reference file '%s{0,.0}'", refFileName));
-				System.exit(1);
-			}
+    if (refsPerSen > 1) {
+      String refFile = refFileName + "0";
+      if (!new File(refFile).exists()) refFile = refFileName + ".0";
+      if (!new File(refFile).exists()) {
+        System.err.println(String.format("* FATAL: can't find first reference file '%s{0,.0}'",
+            refFileName));
+        System.exit(1);
+      }
 
-			numSentences = countLines(refFile);
-		} else {
-			numSentences = countLines(refFileName);
-		}
+      numSentences = countLines(refFile);
+    } else {
+      numSentences = countLines(refFileName);
+    }
 
     processDocInfo();
     // sets numDocuments and docOfSentence[]
@@ -345,23 +345,26 @@ public class MertCore {
     try {
 
       // read in reference sentences
-			BufferedReader reference_readers[] = new BufferedReader[refsPerSen];
-			if (refsPerSen == 1) {
-				reference_readers[0] = new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFileName)), "utf8"));
-			} else {
-				for (int i = 0; i < refsPerSen; i++) {
-					String refFile = refFileName + i;
-					if (! new File(refFile).exists())
-						refFile = refFileName + "." + i;
-					if (! new File(refFile).exists()) {
-						System.err.println(String.format("* FATAL: can't find reference file '%s'", refFile));
-						System.exit(1);
-					}
+      BufferedReader reference_readers[] = new BufferedReader[refsPerSen];
+      if (refsPerSen == 1) {
+        reference_readers[0] =
+            new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFileName)),
+                "utf8"));
+      } else {
+        for (int i = 0; i < refsPerSen; i++) {
+          String refFile = refFileName + i;
+          if (!new File(refFile).exists()) refFile = refFileName + "." + i;
+          if (!new File(refFile).exists()) {
+            System.err.println(String.format("* FATAL: can't find reference file '%s'", refFile));
+            System.exit(1);
+          }
 
-					reference_readers[i] = new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFile)), "utf8"));
-				}
-			}
-				
+          reference_readers[i] =
+              new BufferedReader(new InputStreamReader(new FileInputStream(new File(refFile)),
+                  "utf8"));
+        }
+      }
+
       for (int i = 0; i < numSentences; ++i) {
         for (int r = 0; r < refsPerSen; ++r) {
           // read the rth reference translation for the ith sentence
@@ -369,9 +372,9 @@ public class MertCore {
         }
       }
 
-			// close all the reference files
-			for (int i = 0; i < refsPerSen; i++) 
-				reference_readers[i].close();
+      // close all the reference files
+      for (int i = 0; i < refsPerSen; i++)
+        reference_readers[i].close();
 
       // read in decoder command, if any
       decoderCommand = null;
