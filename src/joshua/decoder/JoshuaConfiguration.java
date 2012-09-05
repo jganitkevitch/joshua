@@ -146,6 +146,18 @@ public class JoshuaConfiguration {
   // hypergraph visualization
   public static boolean visualize_hypergraph = false;
 
+  // discriminative model options
+  public static boolean useTMFeat = true;
+  public static boolean useRuleIDName = false;
+  public static boolean useLMFeat = true;
+  public static boolean useTMTargetFeat = true;
+  public static boolean useEdgeNgramOnly = false;
+  public static int startNgramOrder = 1;
+  public static int endNgramOrder = 2;
+
+  public static boolean useMicroTMFeat = true;
+  public static String wordMapFile;/* tbl for mapping rule words */
+
   // use google linear corpus gain?
   public static boolean useGoogleLinearCorpusGain = false;
   public static double[] linearCorpusGainThetas = null;
@@ -153,7 +165,7 @@ public class JoshuaConfiguration {
 
   // used to extract oracle hypotheses from the forest
   public static String oracleFile = null;
-  
+
   public static String parallel_files_prefix = null;
 
   public static boolean parse = false; // perform synchronous parsing
@@ -439,6 +451,42 @@ public class JoshuaConfiguration {
           } else if (parameter.equals(normalize_key("oovFeatureCost"))) {
             oov_feature_cost = Float.parseFloat(fds[1]);
             logger.finest(String.format("oovFeatureCost: %s", oov_feature_cost));
+          } else if ("useTMFeat".equals(fds[0])) {
+            useTMFeat = Boolean.valueOf(fds[1]);
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("useTMFeat: %s", useTMFeat));
+          } else if ("useLMFeat".equals(fds[0])) {
+            useLMFeat = Boolean.valueOf(fds[1]);
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("useLMFeat: %s", useLMFeat));
+          } else if ("useMicroTMFeat".equals(fds[0])) {
+            useMicroTMFeat = new Boolean(fds[1].trim());
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("useMicroTMFeat: %s", useMicroTMFeat));
+          } else if ("wordMapFile".equals(fds[0])) {
+            wordMapFile = fds[1].trim();
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("wordMapFile: %s", wordMapFile));
+          } else if ("useRuleIDName".equals(fds[0])) {
+            useRuleIDName = new Boolean(fds[1].trim());
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("useRuleIDName: %s", useRuleIDName));
+          } else if ("startNgramOrder".equals(fds[0])) {
+            startNgramOrder = Integer.parseInt(fds[1]);
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("startNgramOrder: %s", startNgramOrder));
+          } else if ("endNgramOrder".equals(fds[0])) {
+            endNgramOrder = Integer.parseInt(fds[1]);
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("endNgramOrder: %s", endNgramOrder));
+          } else if ("useEdgeNgramOnly".equals(fds[0])) {
+            useEdgeNgramOnly = Boolean.valueOf(fds[1]);
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("useEdgeNgramOnly: %s", useEdgeNgramOnly));
+          } else if ("useTMTargetFeat".equals(fds[0])) {
+            useTMTargetFeat = Boolean.valueOf(fds[1]);
+            if (logger.isLoggable(Level.FINEST))
+              logger.finest(String.format("useTMTargetFeat: %s", useTMTargetFeat));
 
           } else if (parameter.equals(normalize_key("useGoogleLinearCorpusGain"))) {
             useGoogleLinearCorpusGain = new Boolean(fds[1].trim());

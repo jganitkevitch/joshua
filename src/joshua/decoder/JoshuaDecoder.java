@@ -42,6 +42,7 @@ import joshua.decoder.ff.tm.Grammar;
 import joshua.decoder.ff.tm.GrammarFactory;
 import joshua.decoder.ff.tm.hash_based.MemoryBasedBatchGrammar;
 import joshua.decoder.ff.tm.packed.PackedGrammar;
+import joshua.discriminative.DiscriminativeSupport;
 import joshua.ui.hypergraph_visualizer.HyperGraphViewer;
 import joshua.util.FileUtility;
 import joshua.util.Regex;
@@ -465,15 +466,15 @@ public class JoshuaDecoder {
         // TODO: lms should have a name or something
         logger.info(String.format("FEATURE: language model #%d, order %d (weight %.3f)",
             (index + 1), languageModels.get(index).getOrder(), weight));
-      }
 
-      else if (feature.equals("latticecost")) {
+
+      } else if (feature.equals("latticecost")) {
         double weight = Double.parseDouble(fields[1]);
         this.featureFunctions.add(new SourcePathFF(this.featureFunctions.size(), weight));
         logger.info(String.format("FEATURE: lattice cost (weight %.3f)", weight));
-      }
 
-      else if (feature.equals("phrasemodel")) {
+
+      } else if (feature.equals("phrasemodel")) {
         // TODO: error-checking
 
         int owner = Vocabulary.id(fields[1]);
@@ -486,9 +487,9 @@ public class JoshuaDecoder {
 
         logger.info(String.format("FEATURE: phrase model %d, owner %s (weight %.3f)", column,
             owner, weight));
-      }
 
-      else if (feature.equals("arityphrasepenalty")) {
+
+      } else if (feature.equals("arityphrasepenalty")) {
         int owner = Vocabulary.id(fields[1]);
         int startArity = Integer.parseInt(fields[2].trim());
         int endArity = Integer.parseInt(fields[3].trim());
@@ -499,17 +500,17 @@ public class JoshuaDecoder {
         logger.info(String.format(
             "FEATURE: arity phrase penalty: owner %s, start %d, end %d (weight %.3f)", owner,
             startArity, endArity, weight));
-      }
 
-      else if (feature.equals("wordpenalty")) {
+
+      } else if (feature.equals("wordpenalty")) {
         double weight = Double.parseDouble(fields[1].trim());
 
         this.featureFunctions.add(new WordPenaltyFF(this.featureFunctions.size(), weight));
 
         logger.info(String.format("FEATURE: word penalty (weight %.3f)", weight));
-      }
 
-      else if (feature.equals("oovpenalty")) {
+
+      } else if (feature.equals("oovpenalty")) {
         double weight = Double.parseDouble(fields[1].trim());
         int owner = Vocabulary.id("pt");
         int column = JoshuaConfiguration.num_phrasal_features;
@@ -520,6 +521,33 @@ public class JoshuaDecoder {
         JoshuaConfiguration.num_phrasal_features += 1;
 
         logger.info(String.format("FEATURE: OOV penalty (weight %.3f)", weight));
+
+      } else if (feature.equals("discriminative") && fields.length == 3) {
+        if (this.languageModels.isEmpty()) {
+          throw new IllegalArgumentException("LM model has not been properly initialized "
+              + "before setting order and weight");
+        }
+
+        String featureFile = null;
+        String modelFile = fields[1].trim();
+
+        double weight = Double.parseDouble(fields[2].trim());
+
+        // LOADING DISCRIMINATIVE FEATURES
+        this.featureFunctions.add(DiscriminativeSupport.setupRerankingFeature(
+            this.featureFunctions.size(), weight, JoshuaConfiguration.useTMFeat,
+            JoshuaConfiguration.useLMFeat, JoshuaConfiguration.useEdgeNgramOnly,
+            JoshuaConfiguration.useTMTargetFeat, JoshuaConfiguration.useMicroTMFeat,
+            JoshuaConfiguration.wordMapFile, JoshuaConfiguration.ngramStateID,
+            JoshuaConfiguration.lm_order, JoshuaConfiguration.startNgramOrder,
+            JoshuaConfiguration.endNgramOrder, featureFile, modelFile, this.ruleStringToIDTable));
+
+        logger.info(String.format("Line: %s\nAdd FeatureTemplateBasedFF, order: %d; weight: %.3f;",
+            featureLine, JoshuaConfiguration.lm_order, weight));
+
+        // NOW MICRO FEATURES ARE MAPPED TO INTEGER IDS
+        // System.out.println(DiscriminativeSupport.getMicroFeatID("PRP POS"));
+
       } else if (feature.equals("edge-sim")) {
         String host = fields[1].trim();
         int port = Integer.parseInt(fields[2].trim());
