@@ -341,7 +341,6 @@ public class KBestExtractor {
       int x = 0;
       x++;
 
-
       // TODO: RE-WRITE THIS PART!!
       if (false) {
         // ####individual model cost, and final transition cost
@@ -385,7 +384,7 @@ public class KBestExtractor {
         }
       }
 
-      // if (false) {
+      // sanity check
       if (performSanityCheck) {
         if (Math.abs(cur.cost - temSum) > 1e-2) {
           StringBuilder error = new StringBuilder();

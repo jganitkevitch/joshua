@@ -40,34 +40,49 @@ public class JoshuaConfiguration {
   // new format enabling multiple language models
   public static ArrayList<String> lms = new ArrayList<String>();
 
+  // new format enabling any number of grammar files
+  public static ArrayList<String> tms = new ArrayList<String>();
+
+  // when set to a grammar's owner, it permits that grammar to have regular expressions in its rules
+  public static String regexpGrammar = "";
+
   // old format specifying attributes of a single language model separately
   public static String lm_type = "kenlm";
   public static double lm_ceiling_cost = 100;
   public static boolean use_left_equivalent_state = false;
-  public static boolean use_right_equivalent_state = true;
+  public static boolean use_right_equivalent_state = false;
   public static int lm_order = 3;
   public static boolean use_sent_specific_lm = false;
   public static String lm_file = null;
   public static int ngramStateID = 0; // TODO ?????????????
 
-  // tm config
+	/* The span limit is the maximum span of the input to which rules from the main translation
+	 * grammar can be applied.  It does not apply to the glue grammar.
+	 */
   public static int span_limit = 10;
-  // note: owner should be different from each other, it can have same value as a word in LM/TM
-  public static String phrase_owner = "pt";
-  public static String glue_owner = "pt";
-  public static String default_non_terminal = "PHRASE";
-  public static String goal_symbol = "S";
+
+	/* This word is in an index into a grammars feature sets.  The name here ties together the
+	 * features present on each grammar line in a grammar file, and the features present in the Joshua
+	 * configuration file.  This allows you to have different sets of features (or shared) across
+	 * grammar files.
+	 */
+  public static String phrase_owner = "pt"; 
+	public static String glue_owner   = "glue";
+
+	// Default symbols.  The symbol here should be enclosed in square brackets.
+  public static String default_non_terminal = "[X]";
+  public static String goal_symbol = "[GOAL]";
+
   public static boolean use_sent_specific_tm = false;
 
   public static boolean dense_features = true;
 
   public static String tm_file = null;
-  public static String tm_format = null;
+  public static String tm_format = "thrax";
 
-  // TODO: default to glue grammar provided with Joshua
   // TODO: support multiple glue grammars
   public static String glue_file = null;
-  public static String glue_format = null;
+  public static String glue_format = "thrax";
 
   // syntax-constrained decoding
   public static boolean constrain_parse = false;
@@ -101,17 +116,22 @@ public class JoshuaConfiguration {
   public static double relative_threshold = 10.0;
   public static int max_n_rules = 50;
 
-  // nbest config
+  /* N-best configuration.
+	 */
+	// make sure output strings are unique
   public static boolean use_unique_nbest = false;
+	// output the synchronous derivation tree
   public static boolean use_tree_nbest = false;
+	// include the phrasal alignments in the output
   public static boolean include_align_index = false;
-  public static boolean add_combined_cost = true; // in the nbest file, compute the final score
-  public static int topN = 500;
+	// include a final field that denotes the complete model score (the dot-product of the weight
+	// vector with the accumulated feature values
+  public static boolean add_combined_cost = true;
+	// The number of hypotheses to output by default
+  public static int topN = 1;
+
   public static boolean escape_trees = false;
 
-  // parallel decoding
-  public static String parallel_files_prefix = "/tmp/temp.parallel"; // C:\\Users\\zli\\Documents\\temp.parallel;
-                                                                     // used for parallel decoding
   public static int num_parallel_decoders = 1; // number of threads should run
 
   // disk hg
@@ -207,12 +227,19 @@ public class JoshuaConfiguration {
           if (parameter.equals(normalize_key("lm"))) {
             lms.add(fds[1]);
 
+					} else if (parameter.equals(normalize_key("tm"))) {
+            tms.add(fds[1]);
+
           } else if (parameter.equals(normalize_key("lm_file"))) {
             lm_file = fds[1].trim();
             logger.finest(String.format("lm file: %s", lm_file));
           } else if (parameter.equals(normalize_key("parse"))) {
             parse = Boolean.parseBoolean(fds[1]);
             logger.finest(String.format("parse: %s", parse));
+
+          } else if (parameter.equals(normalize_key("regexp-grammar"))) {
+            regexpGrammar = fds[1];
+            logger.finest(String.format("regexp-grammar: %s", regexpGrammar));
 
           } else if (parameter.equals(normalize_key("tm_file"))) {
             tm_file = fds[1].trim();
@@ -284,8 +311,12 @@ public class JoshuaConfiguration {
             logger.finest(String.format("default_non_terminal: %s", default_non_terminal));
 
           } else if (parameter.equals(normalize_key("goalSymbol"))) {
-            goal_symbol = "[" + fds[1].trim() + "]";
-            // goal_symbol = fds[1].trim();
+            goal_symbol = fds[1].trim();
+
+            // If the goal symbol was not enclosed in square brackets, then add them
+            if (! goal_symbol.matches("\\[.*\\]"))
+              goal_symbol = "[" + goal_symbol + "]";
+
             logger.finest("goalSymbol: " + goal_symbol);
 
           } else if (parameter.equals(normalize_key("constrain_parse"))) {
@@ -354,12 +385,6 @@ public class JoshuaConfiguration {
           } else if (parameter.equals(normalize_key("top_n"))) {
             topN = Integer.parseInt(fds[1]);
             logger.finest(String.format("topN: %s", topN));
-
-          } else if (parameter.equals(normalize_key("parallel_files_prefix"))) {
-            Random random = new Random();
-            int v = random.nextInt(10000000);// make it random
-            parallel_files_prefix = fds[1] + v;
-            logger.info(String.format("parallel_files_prefix: %s", parallel_files_prefix));
 
           } else if (parameter.equals(normalize_key("num_parallel_decoders"))
               || parameter.equals(normalize_key("threads"))) {
@@ -471,7 +496,7 @@ public class JoshuaConfiguration {
     // then we create one from the handful of separately-specified
     // parameters. These combined lines are later processed in
     // JoshuaDecoder as part of the multiple LM support
-    if (lms.size() == 0) {
+    if (lms.size() == 0 && lm_file != null) {
       String line =
           String.format("%s %d %b %b %.2f %s", lm_type, lm_order, use_left_equivalent_state,
               use_right_equivalent_state, lm_ceiling_cost, lm_file);
@@ -486,6 +511,16 @@ public class JoshuaConfiguration {
       int order = Integer.parseInt(tokens[1]);
       if (order > JoshuaConfiguration.lm_order) JoshuaConfiguration.lm_order = order;
     }
+
+		/* Now we do a similar thing for the TMs, enabling backward compatibility with the old format
+		 * that allowed for just two grammars.  The new format is
+		 *
+		 * tm = FORMAT OWNER SPAN_LIMIT FILE
+		 */
+		if (tms.size() == 0 && tm_file != null) {
+			tms.add(String.format("%s %s %d %s", tm_format, phrase_owner, span_limit, tm_file));
+			tms.add(String.format("%s %s %d %s", glue_format, glue_owner, -1, glue_file));
+		}
 
     if (useGoogleLinearCorpusGain) {
       if (linearCorpusGainThetas == null) {

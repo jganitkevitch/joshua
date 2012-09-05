@@ -48,7 +48,7 @@ import edu.jhu.thrax.util.TestSetFilter;
  * 
  * The DecoderFactory class is responsible for launching the threads.
  * 
- * @author Matt Post <post@jhu.edu>
+ * @author Matt Post <post@cs.jhu.edu>
  * @author Zhifei Li, <zhifei.work@gmail.com>
  * @version $LastChangedDate: 2010-05-02 11:19:17 -0400 (Sun, 02 May 2010) $
  */
@@ -96,7 +96,7 @@ public class DecoderThread extends Thread {
     this.kbestExtractor =
         new KBestExtractor(JoshuaConfiguration.use_unique_nbest,
             JoshuaConfiguration.use_tree_nbest, JoshuaConfiguration.include_align_index,
-            JoshuaConfiguration.add_combined_cost, false, true);
+            JoshuaConfiguration.add_combined_cost, false, false);
 
     // if (JoshuaConfiguration.save_disk_hg) {
     // FeatureFunction languageModel = null;
@@ -225,8 +225,6 @@ public class DecoderThread extends Thread {
       return null;
     }
 
-    Lattice<Integer> input_lattice = sentence.intLattice();
-
     int numGrammars =
         (JoshuaConfiguration.use_sent_specific_tm) ? grammarFactories.size() + 1 : grammarFactories
             .size();
@@ -242,9 +240,9 @@ public class DecoderThread extends Thread {
     if (JoshuaConfiguration.use_sent_specific_tm) {
       // figure out the sentence-level file name
       tmFile = JoshuaConfiguration.tm_file;
-      tmFile =
-          tmFile.endsWith(".gz") ? tmFile.substring(0, tmFile.length() - 3) + "." + sentence.id()
-              + ".gz" : tmFile + "." + sentence.id();
+      tmFile = tmFile.endsWith(".gz") 
+             ? tmFile.substring(0, tmFile.length() - 3) + "." + sentence.id()
+             + ".gz" : tmFile + "." + sentence.id();
 
       // look in a subdirectory named "filtered" e.g.,
       // /some/path/grammar.gz will have sentence-level
