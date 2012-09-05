@@ -153,6 +153,8 @@ public class JoshuaConfiguration {
 
   // used to extract oracle hypotheses from the forest
   public static String oracleFile = null;
+  
+  public static String parallel_files_prefix = null;
 
   public static boolean parse = false; // perform synchronous parsing
 
@@ -442,6 +444,10 @@ public class JoshuaConfiguration {
             useGoogleLinearCorpusGain = new Boolean(fds[1].trim());
             logger
                 .finest(String.format("useGoogleLinearCorpusGain: %s", useGoogleLinearCorpusGain));
+
+          } else if (parameter.equals(normalize_key("parallel_files_prefix"))) {
+            parallel_files_prefix = fds[1].trim();
+            logger.finest(String.format("parallel files prefix: %s", parallel_files_prefix));
 
           } else if (parameter.equals(normalize_key("googleBLEUWeights"))) {
             String[] googleWeights = fds[1].trim().split(";");
