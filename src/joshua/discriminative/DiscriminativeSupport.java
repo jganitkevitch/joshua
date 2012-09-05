@@ -55,7 +55,7 @@ public class DiscriminativeSupport {
       if (rulesIDTable != null) {
         Integer id = rulesIDTable.get(featName);
 
-        if (id != null) featName = "r" + id;// TODO????????????????
+        if (id != null) featName = "r" + id;
       }
 
       // SAVE THE DISCRIMINATIVE FEATURE NAME + VALUE
@@ -65,9 +65,8 @@ public class DiscriminativeSupport {
 
       // NEWLY ADDED
       map_feat_id.put(featName, feat_id);
+      logger.info("Saving feature:" + featName + " with id " + feat_id);
       feat_id++;
-
-      // System.out.println("key: " + feat_key.toString() + "; val: " + val);
     }
     FileUtilityOld.closeReadFile(reader);
   }
@@ -229,7 +228,7 @@ public class DiscriminativeSupport {
     if (map_feat_id.containsKey(feat_name))
       return map_feat_id.get(feat_name);
     else {
-      System.err.println("ERROR: ONE MICRO FEATURE HAS NEVER BEEN SAVED!");
+      System.err.println("ERROR: MICRO FEATURE HAS NEVER BEEN SAVED: " + feat_name);
       return -1;
     }
   }
