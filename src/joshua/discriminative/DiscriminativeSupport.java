@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import joshua.corpus.Vocabulary;
 import joshua.discriminative.feature_related.feature_function.FeatureTemplateBasedFF;
 import joshua.discriminative.feature_related.feature_template.EdgeBigramFT;
 import joshua.discriminative.feature_related.feature_template.FeatureTemplate;
@@ -46,7 +47,7 @@ public class DiscriminativeSupport {
       String[] fds = line.split("\\s+\\|{3}\\s+");
       StringBuffer featNameSB = new StringBuffer();
       for (int i = 0; i < fds.length - 1; i++) {
-        featNameSB.append(fds[i]);
+        featNameSB.append(Vocabulary.id(fds[i]));
         if (i < fds.length - 2) featNameSB.append(" ||| ");
       }
       String featName = featNameSB.toString();
@@ -54,7 +55,6 @@ public class DiscriminativeSupport {
       // obtain abbreviated featName
       if (rulesIDTable != null) {
         Integer id = rulesIDTable.get(featName);
-
         if (id != null) featName = "r" + id;
       }
 
