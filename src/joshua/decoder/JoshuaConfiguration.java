@@ -95,10 +95,6 @@ public class JoshuaConfiguration {
   public static int oov_feature_index = -1;
   public static boolean true_oovs_only = false;
 
-  public static boolean use_micro_tm_feat = true;
-  // Table for mapping rule words, whatever that means.
-  public static String word_map_file;
-
   // number of phrasal features, for correct oov rule creation
   public static int num_phrasal_features = 0;
 
@@ -147,16 +143,15 @@ public class JoshuaConfiguration {
   public static boolean visualize_hypergraph = false;
 
   // discriminative model options
-  public static boolean useTMFeat = true;
-  public static boolean useRuleIDName = false;
-  public static boolean useLMFeat = true;
-  public static boolean useTMTargetFeat = true;
-  public static boolean useEdgeNgramOnly = false;
-  public static int startNgramOrder = 1;
-  public static int endNgramOrder = 2;
-
-  public static boolean useMicroTMFeat = true;
-  public static String wordMapFile;/* tbl for mapping rule words */
+  public static boolean use_tm_feat = true;
+  public static boolean use_lm_feat = true;
+  public static boolean use_rule_id_name = false;
+  public static boolean use_tm_target_feat = true;
+  public static boolean use_edge_ngram_only = false;
+  public static int start_ngram_order = 1;
+  public static int end_ngram_order = 2;
+  public static boolean use_micro_tm_feat = true;
+  public static String word_map_file;
 
   // use google linear corpus gain?
   public static boolean useGoogleLinearCorpusGain = false;
@@ -452,41 +447,37 @@ public class JoshuaConfiguration {
             oov_feature_cost = Float.parseFloat(fds[1]);
             logger.finest(String.format("oovFeatureCost: %s", oov_feature_cost));
           } else if ("useTMFeat".equals(fds[0])) {
-            useTMFeat = Boolean.valueOf(fds[1]);
+            use_tm_feat = Boolean.valueOf(fds[1]);
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("useTMFeat: %s", useTMFeat));
+              logger.finest(String.format("useTMFeat: %s", use_tm_feat));
           } else if ("useLMFeat".equals(fds[0])) {
-            useLMFeat = Boolean.valueOf(fds[1]);
+            use_lm_feat = Boolean.valueOf(fds[1]);
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("useLMFeat: %s", useLMFeat));
+              logger.finest(String.format("useLMFeat: %s", use_lm_feat));
           } else if ("useMicroTMFeat".equals(fds[0])) {
-            useMicroTMFeat = new Boolean(fds[1].trim());
+            use_micro_tm_feat = new Boolean(fds[1].trim());
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("useMicroTMFeat: %s", useMicroTMFeat));
-          } else if ("wordMapFile".equals(fds[0])) {
-            wordMapFile = fds[1].trim();
-            if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("wordMapFile: %s", wordMapFile));
+              logger.finest(String.format("useMicroTMFeat: %s", use_micro_tm_feat));
           } else if ("useRuleIDName".equals(fds[0])) {
-            useRuleIDName = new Boolean(fds[1].trim());
+            use_rule_id_name = new Boolean(fds[1].trim());
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("useRuleIDName: %s", useRuleIDName));
+              logger.finest(String.format("useRuleIDName: %s", use_rule_id_name));
           } else if ("startNgramOrder".equals(fds[0])) {
-            startNgramOrder = Integer.parseInt(fds[1]);
+            start_ngram_order = Integer.parseInt(fds[1]);
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("startNgramOrder: %s", startNgramOrder));
+              logger.finest(String.format("startNgramOrder: %s", start_ngram_order));
           } else if ("endNgramOrder".equals(fds[0])) {
-            endNgramOrder = Integer.parseInt(fds[1]);
+            end_ngram_order = Integer.parseInt(fds[1]);
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("endNgramOrder: %s", endNgramOrder));
+              logger.finest(String.format("endNgramOrder: %s", end_ngram_order));
           } else if ("useEdgeNgramOnly".equals(fds[0])) {
-            useEdgeNgramOnly = Boolean.valueOf(fds[1]);
+            use_edge_ngram_only = Boolean.valueOf(fds[1]);
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("useEdgeNgramOnly: %s", useEdgeNgramOnly));
+              logger.finest(String.format("useEdgeNgramOnly: %s", use_edge_ngram_only));
           } else if ("useTMTargetFeat".equals(fds[0])) {
-            useTMTargetFeat = Boolean.valueOf(fds[1]);
+            use_tm_target_feat = Boolean.valueOf(fds[1]);
             if (logger.isLoggable(Level.FINEST))
-              logger.finest(String.format("useTMTargetFeat: %s", useTMTargetFeat));
+              logger.finest(String.format("useTMTargetFeat: %s", use_tm_target_feat));
 
           } else if (parameter.equals(normalize_key("useGoogleLinearCorpusGain"))) {
             useGoogleLinearCorpusGain = new Boolean(fds[1].trim());

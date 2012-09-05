@@ -535,12 +535,12 @@ public class JoshuaDecoder {
 
         // LOADING DISCRIMINATIVE FEATURES
         this.featureFunctions.add(DiscriminativeSupport.setupRerankingFeature(
-            this.featureFunctions.size(), weight, JoshuaConfiguration.useTMFeat,
-            JoshuaConfiguration.useLMFeat, JoshuaConfiguration.useEdgeNgramOnly,
-            JoshuaConfiguration.useTMTargetFeat, JoshuaConfiguration.useMicroTMFeat,
-            JoshuaConfiguration.wordMapFile, JoshuaConfiguration.ngramStateID,
-            JoshuaConfiguration.lm_order, JoshuaConfiguration.startNgramOrder,
-            JoshuaConfiguration.endNgramOrder, featureFile, modelFile, this.ruleStringToIDTable));
+            this.featureFunctions.size(), weight, JoshuaConfiguration.use_tm_feat,
+            JoshuaConfiguration.use_lm_feat, JoshuaConfiguration.use_edge_ngram_only,
+            JoshuaConfiguration.use_tm_target_feat, JoshuaConfiguration.use_micro_tm_feat,
+            JoshuaConfiguration.word_map_file, JoshuaConfiguration.ngramStateID,
+            JoshuaConfiguration.lm_order, JoshuaConfiguration.start_ngram_order,
+            JoshuaConfiguration.end_ngram_order, featureFile, modelFile, this.ruleStringToIDTable));
 
         logger.info(String.format("Line: %s\nAdd FeatureTemplateBasedFF, order: %d; weight: %.3f;",
             featureLine, JoshuaConfiguration.lm_order, weight));
