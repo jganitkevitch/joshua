@@ -47,7 +47,7 @@ public class DiscriminativeSupport {
       String[] fds = line.split("\\s+\\|{3}\\s+");
       StringBuffer featNameSB = new StringBuffer();
       for (int i = 0; i < fds.length - 1; i++) {
-        featNameSB.append(Vocabulary.id(fds[i]));
+        featNameSB.append(fds[i]);
         if (i < fds.length - 2) featNameSB.append(" ||| ");
       }
       String featName = featNameSB.toString();
@@ -62,6 +62,10 @@ public class DiscriminativeSupport {
       double val = new Double(fds[fds.length - 1]);
       modelTable.put(featName, val);
       // System.out.println(featName+" "+val);
+
+      // TODO: This does not seem to match up with how it is queried. Also, the downstream
+      // implementation of the feature is based on inefficient string concatenations and lookups.
+      // Abandoning integration for now and moving on to something more productive.
 
       // NEWLY ADDED
       map_feat_id.put(featName, feat_id);
