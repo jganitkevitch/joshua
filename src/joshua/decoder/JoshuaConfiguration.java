@@ -474,8 +474,11 @@ public class JoshuaConfiguration {
             ;
 
           } else {
-            logger.warning("FATAL: unknown configuration parameter '" + fds[0] + "'");
-            System.exit(1);
+            // TODO: there is a secondary config reader for sparse features and discriminative stuff
+            // where a lot of other settings are defined.
+            //
+            // logger.warning("FATAL: unknown configuration parameter '" + fds[0] + "'");
+            // System.exit(1);
           }
 
         } else {
