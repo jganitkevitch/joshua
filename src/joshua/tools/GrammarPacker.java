@@ -178,7 +178,7 @@ public class GrammarPacker {
     this.types.setLabeled(true);
 
     while (grammar.hasNext()) {
-      String line = grammar.next().trim();
+      String line = grammar.next();
       counter++;
       String[] fields = line.split("\\s\\|{3}\\s");
       if (fields.length < 4) {
@@ -247,7 +247,7 @@ public class GrammarPacker {
 
     TreeMap<Integer, Float> features = new TreeMap<Integer, Float>();
     while (grammar_reader.hasNext()) {
-      String grammar_line = grammar_reader.next().trim();
+      String grammar_line = grammar_reader.next();
       counter++;
       slice_counter++;
 
@@ -263,8 +263,8 @@ public class GrammarPacker {
 
       // Reached slice limit size, indicate that we're closing up.
       if (!ready_to_flush
-          && (slice_counter > SLICE_SIZE || feature_buffer.overflowing() || (packAlignments && alignment_buffer
-              .overflowing()))) {
+          && (slice_counter > SLICE_SIZE || feature_buffer.overflowing() 
+              || (packAlignments && alignment_buffer.overflowing()))) {
         ready_to_flush = true;
         first_source_word = source_words[0];
       }
