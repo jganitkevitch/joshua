@@ -294,8 +294,8 @@ public class Optimizer {
       }
     }
 
-     System.out.println("Tau="+Tau+"\nAll possible pair number: "+candCount*(candCount-1));
-     System.out.println("Number of accepted pairs after random selection: "+acceptedPair.size());
+//     System.out.println("Tau="+Tau+"\nAll possible pair number: "+candCount*(candCount-1));
+//     System.out.println("Number of accepted pairs after random selection: "+acceptedPair.size());
 
     // sort sampled pairs according to "scoreDiff"
     ValueComparator comp = new ValueComparator(acceptedPair);
