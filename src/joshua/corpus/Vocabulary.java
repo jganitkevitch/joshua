@@ -255,7 +255,7 @@ public class Vocabulary {
     return FormatUtils.getNonterminalIndex(word(id));
   }
 
-  private static void clear() {
+  public static void clear() {
     hashToId = new TreeMap<Long, Integer>();
     hashToString = new TreeMap<Long, String>();
     idToString = new ArrayList<String>();

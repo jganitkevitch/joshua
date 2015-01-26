@@ -17,16 +17,24 @@ public class PackedGrammarServer {
 
   private PackedGrammar grammar;
 
-  public PackedGrammarServer(String packed_directory,JoshuaConfiguration joshuaConfiguration) throws FileNotFoundException, IOException {
+  public PackedGrammarServer(String packed_directory, JoshuaConfiguration joshuaConfiguration)
+      throws FileNotFoundException, IOException {
     grammar = new PackedGrammar(packed_directory, -1, "owner", joshuaConfiguration);
   }
 
   public List<Rule> get(String source) {
     return get(source.trim().split("\\s+"));
   }
-  
+
   public List<Rule> get(String[] source) {
-    int[] src = Vocabulary.addAll(source);
+    int[] src = new int[source.length];
+    for (int i = 0; i < source.length; ++i) {
+      if (FormatUtils.isIndexedNonterminal(source[i]))   
+        src[i] = Vocabulary.id(FormatUtils.markup(FormatUtils.cleanIndexedNonterminal(source[i])));
+      else
+        src[i] = Vocabulary.id(source[i]);
+    }
+    
     Trie walker = grammar.getTrieRoot();
     for (int s : src) {
       walker = walker.match(s);
@@ -35,37 +43,39 @@ public class PackedGrammarServer {
     }
     return walker.getRuleCollection().getRules();
   }
-  
+
   public Map<String, Float> scores(String source, String target) {
     return scores(source.trim().split("\\s+"), target.trim().split("\\s+"));
   }
-  
+
   public Map<String, Float> scores(String[] source, String[] target) {
     List<Rule> rules = get(source);
-    
+
     if (rules == null)
       return null;
-    
+
     int[] tgt = Vocabulary.addAll(target);
+    
     for (Rule r : rules)
       if (Arrays.equals(tgt, r.getEnglish()))
         return r.getFeatureVector().getMap();
-    
+
     return null;
   }
-  
-  
+
   public static void main(String[] args) throws FileNotFoundException, IOException {
     JoshuaConfiguration joshuaConfiguration = new JoshuaConfiguration();
-    PackedGrammarServer pgs = new PackedGrammarServer(args[0],joshuaConfiguration);
-    
+    PackedGrammarServer pgs = new PackedGrammarServer(args[0], joshuaConfiguration);
+
     Scanner user = new Scanner(System.in);
     while (user.hasNextLine()) {
       String line = user.nextLine().trim();
       List<Rule> rules = pgs.get(line);
-      if (rules == null) continue;
+      if (rules == null)
+        continue;
       for (Rule r : rules)
         System.out.println(r.toString());
     }
+    user.close();
   }
 }

@@ -24,6 +24,11 @@ public class FormatUtils {
     return (token.charAt(0) == '[') && (token.charAt(token.length() - 1) == ']');
   }
 
+  public static boolean isIndexedNonterminal(String token) {
+    return (token.charAt(0) == '[') && (token.charAt(token.length() - 1) == ']')
+        && (token.charAt(token.length() - 3) == ',');
+  }
+
   public static String cleanNonterminal(String nt) {
     if (isNonterminal(nt))
       return nt.substring(1, nt.length() - 1);
@@ -54,9 +59,9 @@ public class FormatUtils {
    * @return the nonterminal string surrounded in square brackets (if not already)
    */
   public static String markup(String nt) {
-    if (isNonterminal(nt)) 
+    if (isNonterminal(nt))
       return nt;
-    else 
+    else
       return "[" + nt + "]";
   }
 
