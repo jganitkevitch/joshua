@@ -114,6 +114,9 @@ public class LanguageModelFF extends StatefulFF {
     boolean considerIncompleteNgrams = true;
 
     int[] enWords = rule.getEnglish();
+    
+    if (enWords.length == 0)
+      return weight * estimate;
 
     List<Integer> words = new ArrayList<Integer>();
     boolean skipStart = (enWords[0] == START_SYM_ID);
@@ -155,7 +158,7 @@ public class LanguageModelFF extends StatefulFF {
 
       boolean considerIncompleteNgrams = true;
       boolean skipStart = true;
-      if (words.get(0) != START_SYM_ID) {
+      if (words.size() == 0 || words.get(0) != START_SYM_ID) {
         skipStart = false;
       }
       estimate += scoreChunkLogP(words, considerIncompleteNgrams, skipStart);

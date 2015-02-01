@@ -802,7 +802,7 @@ public class KBestExtractor {
 
     @Override
     /**
-     * Whenever we reach a rule in the depth-first derivaiton, we add it to the stack
+     * Whenever we reach a rule in the depth-first derivation, we add it to the stack
      * via a call to the merge() function.
      */
     public void before(DerivationState state, int level) {
@@ -824,7 +824,7 @@ public class KBestExtractor {
      * is the complete target (or source) string.
      */
     public String toString() {
-      return outputs.pop().replaceAll("<s> ", "").replace(" </s>", "");
+      return outputs.pop().replaceAll("\\s+", " ").replaceAll("<s> ", "").replace(" </s>", "");
     }
   }
 

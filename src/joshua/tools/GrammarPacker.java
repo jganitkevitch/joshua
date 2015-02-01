@@ -191,6 +191,9 @@ public class GrammarPacker {
       String[] target = fields[2].split("\\s");
       String[] features = fields[3].split("\\s");
 
+      if (target.length == 1 && target[0].isEmpty())
+        target = new String[0];
+      
       Vocabulary.id(lhs);
       try {
         // Add symbols to vocabulary.
@@ -208,6 +211,7 @@ public class GrammarPacker {
         }
       } catch (java.lang.StringIndexOutOfBoundsException e) {
         System.err.println(String.format("* Skipping bad grammar line '%s'", line));
+        e.printStackTrace();
         continue;
       }
 
@@ -260,11 +264,15 @@ public class GrammarPacker {
       String[] source_words = fields[1].split("\\s");
       String[] target_words = fields[2].split("\\s");
       String[] feature_entries = fields[3].split("\\s");
+      
+      if (target_words.length == 1 && target_words[0].isEmpty())
+        target_words = new String[0];
+      
 
       // Reached slice limit size, indicate that we're closing up.
       if (!ready_to_flush
-          && (slice_counter > SLICE_SIZE || feature_buffer.overflowing() 
-              || (packAlignments && alignment_buffer.overflowing()))) {
+          && (slice_counter > SLICE_SIZE || feature_buffer.overflowing() || (packAlignments && alignment_buffer
+              .overflowing()))) {
         ready_to_flush = true;
         first_source_word = source_words[0];
       }
@@ -315,7 +323,7 @@ public class GrammarPacker {
       for (int f = 0; f < feature_entries.length; ++f) {
         String feature_entry = feature_entries[f];
         int feature_id;
-        float feature_value; 
+        float feature_value;
         if (feature_entry.contains("=")) {
           String[] parts = feature_entry.split("=");
           if (parts[0].equals("Alignment"))
@@ -326,8 +334,11 @@ public class GrammarPacker {
           feature_id = Vocabulary.id(String.valueOf(feature_count++));
           feature_value = Float.parseFloat(feature_entry);
         }
-        if (feature_value != 0)
+        if (feature_value != 0) {
+          System.err.println("FEAT: " + feature_entry + " ID: " + feature_id + " VAL: "
+              + feature_value);
           features.put(encoderConfig.innerId(feature_id), feature_value);
+        }
       }
       int features_index = feature_buffer.add(features);
 

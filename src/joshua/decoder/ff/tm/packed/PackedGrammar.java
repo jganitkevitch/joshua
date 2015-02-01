@@ -270,7 +270,7 @@ public class PackedGrammar extends BatchGrammar {
 
     private final int[] getTarget(int pointer) {
       // Figure out level.
-      int tgt_length = 1;
+      int tgt_length = 0;
       while (tgt_length < (targetLookup.length + 1) && targetLookup[tgt_length] <= pointer)
         tgt_length++;
       int[] tgt = new int[tgt_length];

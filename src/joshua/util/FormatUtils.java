@@ -21,12 +21,13 @@ public class FormatUtils {
   }
 
   public static boolean isNonterminal(String token) {
-    return (token.charAt(0) == '[') && (token.charAt(token.length() - 1) == ']');
+    return (token != null) && (token.length() != 0) && (token.charAt(0) == '[')
+        && (token.charAt(token.length() - 1) == ']');
   }
 
   public static boolean isIndexedNonterminal(String token) {
-    return (token.charAt(0) == '[') && (token.charAt(token.length() - 1) == ']')
-        && (token.charAt(token.length() - 3) == ',');
+    return (token != null) && (token.length() != 0) && (token.charAt(0) == '[')
+        && (token.charAt(token.length() - 1) == ']') && (token.charAt(token.length() - 3) == ',');
   }
 
   public static String cleanNonterminal(String nt) {
