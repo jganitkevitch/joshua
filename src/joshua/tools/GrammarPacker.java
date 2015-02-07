@@ -180,6 +180,10 @@ public class GrammarPacker {
     while (grammar.hasNext()) {
       String line = grammar.next();
       counter++;
+
+      if (grammarAlignments && line.charAt(line.length() - 1) == '|')
+        line = line + " ";
+
       String[] fields = line.split("\\s\\|{3}\\s");
       if (fields.length < 4) {
         logger.warning("Incomplete grammar line at line " + counter);
@@ -193,7 +197,7 @@ public class GrammarPacker {
 
       if (target.length == 1 && target[0].isEmpty())
         target = new String[0];
-      
+
       Vocabulary.id(lhs);
       try {
         // Add symbols to vocabulary.
@@ -255,6 +259,9 @@ public class GrammarPacker {
       counter++;
       slice_counter++;
 
+      if (grammarAlignments && grammar_line.charAt(grammar_line.length() - 1) == '|')
+        grammar_line = grammar_line + " ";
+
       String[] fields = grammar_line.split("\\s\\|{3}\\s");
       if (fields.length < 4) {
         logger.warning("Incomplete grammar line at line " + counter);
@@ -264,10 +271,9 @@ public class GrammarPacker {
       String[] source_words = fields[1].split("\\s");
       String[] target_words = fields[2].split("\\s");
       String[] feature_entries = fields[3].split("\\s");
-      
+
       if (target_words.length == 1 && target_words[0].isEmpty())
         target_words = new String[0];
-      
 
       // Reached slice limit size, indicate that we're closing up.
       if (!ready_to_flush
@@ -295,7 +301,7 @@ public class GrammarPacker {
       if (packAlignments) {
         String alignment_line;
         if (grammarAlignments) {
-          alignment_line = fields[4];
+          alignment_line = (fields.length > 4 ? fields[4] : "");
         } else {
           if (!alignment_reader.hasNext()) {
             logger.severe("No more alignments starting in line " + counter);
@@ -303,16 +309,20 @@ public class GrammarPacker {
           }
           alignment_line = alignment_reader.next().trim();
         }
-        String[] alignment_entries = alignment_line.split("\\s");
-        byte[] alignments = new byte[alignment_entries.length * 2];
-        if (alignment_entries.length != 0) {
-          for (int i = 0; i < alignment_entries.length; i++) {
-            String[] parts = alignment_entries[i].split("-");
-            alignments[2 * i] = Byte.parseByte(parts[0]);
-            alignments[2 * i + 1] = Byte.parseByte(parts[1]);
+        if (!alignment_line.isEmpty()) {
+          String[] alignment_entries = alignment_line.split("\\s");
+          byte[] alignments = new byte[alignment_entries.length * 2];
+          if (alignment_entries.length != 0) {
+            for (int i = 0; i < alignment_entries.length; i++) {
+              String[] parts = alignment_entries[i].split("-");
+              alignments[2 * i] = Byte.parseByte(parts[0]);
+              alignments[2 * i + 1] = Byte.parseByte(parts[1]);
+            }
           }
+          alignment_index = alignment_buffer.add(alignments);
+        } else {
+          alignment_index = alignment_buffer.add(new byte[0]);
         }
-        alignment_index = alignment_buffer.add(alignments);
       }
 
       // Process features.
@@ -335,8 +345,6 @@ public class GrammarPacker {
           feature_value = Float.parseFloat(feature_entry);
         }
         if (feature_value != 0) {
-          System.err.println("FEAT: " + feature_entry + " ID: " + feature_id + " VAL: "
-              + feature_value);
           features.put(encoderConfig.innerId(feature_id), feature_value);
         }
       }
